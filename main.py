@@ -6,6 +6,8 @@ from json import JSONDecodeError
 
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
+import babar
+babar.drawBabar()
 
 import Vehicule
 
