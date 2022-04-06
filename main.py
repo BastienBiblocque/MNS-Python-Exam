@@ -83,11 +83,37 @@ def save(request: Request):
         filename = request.query_params['FileName'] + '.txt'
         with open(filename, 'w') as file:
             for element in allVehicule:
-                file.write(str(element.__dict__) + '\n')
+                file.write(json.dumps(element.__dict__) + '\n')
+
         return JSONResponse({"succes": "all save"})
     else:
         return JSONResponse({"error": "FileName is required"})
 
+
+@app.get('/load')
+def load(request: Request):
+    if 'FileName' in request.query_params:
+        filename = request.query_params['FileName'] + '.txt'
+        with open(filename, 'r') as file:
+            for line in file:
+                print(line)
+                data = json.loads(line)
+
+                print(data)
+
+                # dataToSend = {
+                #     'type': data['type'],
+                #     'nom': data['nom'],
+                #     'marque': data['marque'],
+                #     'vitesse': data['vitesse'],
+                #     'km': data['km'],
+                # }
+                # newVehicule = Vehicule.Vehicule(dataToSend)
+                # newVehicule.save(allVehicule)
+        print(allVehicule)
+        return JSONResponse({"succes": "all load"})
+    else:
+        return JSONResponse({"error": "FileName is required"})
 
 
 @app.exception_handler(StarletteHTTPException)
