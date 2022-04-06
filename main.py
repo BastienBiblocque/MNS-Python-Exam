@@ -37,11 +37,11 @@ async def postVehicule(request: Request):
             if newVehicule:
                 return JSONResponse({"success": 'Element created', 'data': newVehicule.__dict__})
             else:
-                return JSONResponse({"error": 'Element not created'})
+                return JSONResponse({"error": 'Element not created'}, 500)
         else:
-            return JSONResponse({"error": 'Type not allowed'})
+            return JSONResponse({"error": 'Type not allowed'}, 404)
     except:
-        return JSONResponse({'error': 'Il manque un ou plusieurs parametres'})
+        return JSONResponse({'error': 'Il manque un ou plusieurs parametres'}, 404)
 
 
 @app.get('/vehicule')
@@ -53,7 +53,7 @@ async def getNumberOfVehicule():
 async def getNumberOfVehiculePerType(request: Request):
     numberOfElement = 0
     if not 'type' in request.query_params:
-        return JSONResponse({"error": 'type is required'})
+        return JSONResponse({"error": 'type is required'}, 404)
     for element in allVehicule:
         if getattr(element, 'type') == request.query_params['type']:
             numberOfElement += 1
@@ -87,7 +87,7 @@ def save(request: Request):
 
         return JSONResponse({"succes": "all save"})
     else:
-        return JSONResponse({"error": "FileName is required"})
+        return JSONResponse({"error": "FileName is required"}, 404)
 
 
 @app.get('/load')
@@ -109,12 +109,16 @@ def load(request: Request):
         print(allVehicule)
         return JSONResponse({"succes": "all load"})
     else:
-        return JSONResponse({"error": "FileName is required"})
+        return JSONResponse({"error": "FileName is required"}, 404)
+
 
 @app.get('/clear')
 def load():
-    allVehicule.clear()
-    return JSONResponse({"succes": "all clear"})
+    try:
+        allVehicule.clear()
+        return JSONResponse({"succes": "all clear"})
+    except:
+        return JSONResponse({'error': 'Une erreur inconnue est survenue'}, 500)
 
 
 @app.exception_handler(StarletteHTTPException)
