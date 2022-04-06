@@ -111,6 +111,11 @@ def load(request: Request):
     else:
         return JSONResponse({"error": "FileName is required"})
 
+@app.get('/clear')
+def load():
+    allVehicule.clear()
+    return JSONResponse({"succes": "all clear"})
+
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
