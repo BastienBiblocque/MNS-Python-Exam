@@ -96,20 +96,16 @@ def load(request: Request):
         filename = request.query_params['FileName'] + '.txt'
         with open(filename, 'r') as file:
             for line in file:
-                print(line)
                 data = json.loads(line)
-
-                print(data)
-
-                # dataToSend = {
-                #     'type': data['type'],
-                #     'nom': data['nom'],
-                #     'marque': data['marque'],
-                #     'vitesse': data['vitesse'],
-                #     'km': data['km'],
-                # }
-                # newVehicule = Vehicule.Vehicule(dataToSend)
-                # newVehicule.save(allVehicule)
+                dataToSend = {
+                    'type': data['type'],
+                    'nom': data['nom'],
+                    'marque': data['marque'],
+                    'vitesse': data['vitesse'],
+                    'km': data['km'],
+                }
+                newVehicule = Vehicule.Vehicule(dataToSend)
+                newVehicule.save(allVehicule)
         print(allVehicule)
         return JSONResponse({"succes": "all load"})
     else:
