@@ -13,6 +13,8 @@ app = FastAPI()
 
 allVehicule = []
 
+allowedType = ['Bateau', 'Voiture', 'Avion', 'Moto']
+
 
 @app.get('/test')
 def univ():
@@ -20,21 +22,24 @@ def univ():
 
 
 @app.post('/vehicule')
-async def writeFile(request: Request):
+async def postVehicule(request: Request):
     try:
-        dataToSend = {
-            'type': request.query_params['type'],
-            'nom': request.query_params['nom'],
-            'marque': request.query_params['marque'],
-            'vitesse': request.query_params['vitesse'],
-            'km': request.query_params['km'],
-        }
-        newVehicule = Vehicule.Vehicule(dataToSend)
-        newVehicule.save(allVehicule)
-        if newVehicule:
-            return JSONResponse({"success": 'Element created', 'data': newVehicule.__dict__})
+        if request.query_params['type'] in allowedType:
+            dataToSend = {
+                'type': request.query_params['type'],
+                'nom': request.query_params['nom'],
+                'marque': request.query_params['marque'],
+                'vitesse': request.query_params['vitesse'],
+                'km': request.query_params['km'],
+            }
+            newVehicule = Vehicule.Vehicule(dataToSend)
+            newVehicule.save(allVehicule)
+            if newVehicule:
+                return JSONResponse({"success": 'Element created', 'data': newVehicule.__dict__})
+            else:
+                return JSONResponse({"error": 'Element not created'})
         else:
-            return JSONResponse({"error": 'Element not created'})
+            return JSONResponse({"error": 'Type not allowed'})
     except:
         return JSONResponse({'error': 'Il manque un ou plusieurs parametres'})
 
@@ -70,6 +75,19 @@ def searchVehicule(request: Request):
         return JSONResponse({"nombre du type recherché": 'Element not found'})
     else:
         return JSONResponse({"nombre du type recherché": dataToReturn})
+
+
+@app.get('/save')
+def save(request: Request):
+    if 'FileName' in request.query_params:
+        filename = request.query_params['FileName'] + '.txt'
+        with open(filename, 'w') as file:
+            for element in allVehicule:
+                file.write(str(element.__dict__) + '\n')
+        return JSONResponse({"succes": "all save"})
+    else:
+        return JSONResponse({"error": "FileName is required"})
+
 
 
 @app.exception_handler(StarletteHTTPException)
